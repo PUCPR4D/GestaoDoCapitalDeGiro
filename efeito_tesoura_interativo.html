@@ -1,138 +1,309 @@
-
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Efeito Tesoura — Gestão do Capital de Giro</title>
 <style>
-  :root {
-    --gap: 14px;
-    --card-radius: 12px;
-  }
-  .et-wrap { font-family: var(--font-sans); padding: 1.5rem 0 2rem; }
-  .et-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 4px; }
-  .et-subtitle { font-size: 13px; color: var(--color-text-secondary); margin: 0 0 1.5rem; }
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
 
-  /* Progress bar */
-  .et-progress { display: flex; gap: 6px; margin-bottom: 1.25rem; flex-wrap: wrap; }
-  .et-dot {
-    flex: 1; min-width: 32px; height: 4px; border-radius: 2px;
-    background: var(--color-border-tertiary); cursor: pointer;
-    transition: background .3s; position: relative;
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --surface2: #f2f0eb;
+    --border: rgba(0,0,0,0.10);
+    --border-md: rgba(0,0,0,0.18);
+    --text: #1a1a18;
+    --text-2: #555550;
+    --text-3: #999990;
+    --red: #D63B3B;
+    --red-bg: #FDF0F0;
+    --red-dark: #8B1F1F;
+    --amber: #BA7517;
+    --amber-bg: #FEF3E2;
+    --amber-dark: #6B3F08;
+    --green: #3B7A3B;
+    --green-bg: #EEF7EE;
+    --green-dark: #1A4A1A;
+    --blue: #2563A8;
+    --blue-bg: #EBF3FD;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 16px rgba(0,0,0,0.07);
   }
-  .et-dot.active { background: #E24B4A; }
-  .et-dot.visited { background: #BA7517; }
-  .et-dot-label {
-    position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
-    font-size: 10px; color: var(--color-text-tertiary); white-space: nowrap;
-    pointer-events: none;
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
   }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.25rem;
+  }
+  .header-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 6px;
+  }
+  .header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .header p {
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.6;
+  }
+
+  /* Progress */
+  .progress-wrap {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 1.25rem;
+  }
+  .dot {
+    flex: 1;
+    height: 5px;
+    border-radius: 3px;
+    background: var(--border);
+    cursor: pointer;
+    transition: background .3s;
+  }
+  .dot.visited { background: var(--amber); }
+  .dot.active  { background: var(--red); }
 
   /* Main card */
-  .et-card {
-    background: var(--color-background-primary);
-    border: 0.5px solid var(--color-border-tertiary);
-    border-radius: var(--card-radius);
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
     overflow: hidden;
   }
-  .et-card-header {
-    padding: 1rem 1.25rem 0.75rem;
-    border-bottom: 0.5px solid var(--color-border-tertiary);
-    display: flex; align-items: center; gap: 12px;
+  .card-header {
+    padding: 1.1rem 1.4rem .9rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
-  .et-step-badge {
-    width: 32px; height: 32px; border-radius: 50%;
+  .badge {
+    width: 36px; height: 36px;
+    border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 500; flex-shrink: 0;
+    font-size: 14px; font-weight: 600;
+    flex-shrink: 0;
     transition: background .4s, color .4s;
   }
-  .et-card-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin: 0; }
-  .et-card-tag {
-    margin-left: auto; font-size: 11px; font-weight: 500;
-    padding: 3px 9px; border-radius: 99px; white-space: nowrap;
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+  }
+  .tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 99px;
+    white-space: nowrap;
     transition: background .4s, color .4s;
   }
-  .et-card-body { padding: 1rem 1.25rem; }
-  .et-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 10px; margin-top: 0.5rem; }
-  .et-metric {
-    background: var(--color-background-secondary);
-    border-radius: 8px; padding: 10px 12px;
+  .card-body { padding: 1.1rem 1.4rem; }
+
+  /* Metrics */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: .9rem;
   }
-  .et-metric-label { font-size: 11px; color: var(--color-text-secondary); margin: 0 0 4px; }
-  .et-metric-value { font-size: 18px; font-weight: 500; color: var(--color-text-primary); margin: 0; transition: color .4s; }
-  .et-explanation {
-    font-size: 13px; color: var(--color-text-secondary); line-height: 1.6;
-    margin-top: 0.75rem; padding-top: 0.75rem;
-    border-top: 0.5px solid var(--color-border-tertiary);
+  .metric {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    border: 1px solid var(--border);
   }
-  .et-consequence {
-    margin-top: 0.75rem; padding: 8px 12px;
-    border-radius: 8px; font-size: 12px; font-weight: 500;
-    display: flex; align-items: center; gap: 8px;
+  .metric-label { font-size: 11px; color: var(--text-3); margin-bottom: 4px; }
+  .metric-value { font-size: 17px; font-weight: 600; transition: color .4s; }
+
+  /* Explanation */
+  .explanation {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.7;
+    padding: .85rem 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: .85rem;
+  }
+  .explanation strong { color: var(--text); font-weight: 600; }
+
+  /* Consequence */
+  .consequence {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 9px 13px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 1.1rem;
+    transition: background .4s, color .4s;
   }
 
   /* Chart */
-  .et-chart-wrap { margin-top: 1.5rem; }
-  .et-chart-title { font-size: 12px; color: var(--color-text-secondary); margin: 0 0 8px; }
-  .et-chart { width: 100%; height: 120px; position: relative; }
-  .et-chart svg { width: 100%; height: 100%; }
+  .chart-wrap { }
+  .chart-title {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 8px;
+  }
+  .chart-legend {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 6px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-2);
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+  }
+  #chartSvg {
+    width: 100%;
+    height: 130px;
+    display: block;
+  }
 
   /* Controls */
-  .et-controls { display: flex; gap: 10px; margin-top: 1.25rem; align-items: center; }
-  .et-btn {
-    padding: 7px 16px; border-radius: 8px; font-size: 13px; font-weight: 500;
-    border: 0.5px solid var(--color-border-secondary); background: transparent;
-    color: var(--color-text-primary); cursor: pointer;
-    transition: background .15s, transform .1s;
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
   }
-  .et-btn:hover { background: var(--color-background-secondary); }
-  .et-btn:active { transform: scale(.97); }
-  .et-btn.primary {
-    background: var(--color-background-danger);
-    color: var(--color-text-danger);
-    border-color: var(--color-border-danger);
+  button {
+    padding: 8px 18px;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid var(--border-md);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    transition: background .15s, transform .1s, box-shadow .15s;
   }
-  .et-btn:disabled { opacity: .35; cursor: not-allowed; }
-  .et-auto-label { font-size: 12px; color: var(--color-text-secondary); margin-left: auto; }
-  .et-step-counter { font-size: 12px; color: var(--color-text-secondary); }
+  button:hover { background: var(--surface2); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  button:active { transform: scale(.97); }
+  button:disabled { opacity: .35; cursor: not-allowed; }
+  button.primary {
+    background: var(--red-bg);
+    color: var(--red-dark);
+    border-color: rgba(214,59,59,.25);
+  }
+  button.primary:hover { background: #fce4e4; }
+  .step-counter {
+    font-size: 12px;
+    color: var(--text-3);
+    font-variant-numeric: tabular-nums;
+  }
 
-  /* Scissors animation on step 7 */
-  @keyframes scissor-open { 0%,100%{transform:rotate(0deg)} 50%{transform:rotate(18deg)} }
-  .scissor { animation: scissor-open 1.2s ease-in-out infinite; transform-origin: 50% 50%; }
-  .scissor2 { animation: scissor-open 1.2s ease-in-out infinite reverse; transform-origin: 50% 50%; }
+  /* Ruptura alert */
+  .ruptura-banner {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: var(--red-bg);
+    border: 1px solid rgba(214,59,59,.25);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    margin-bottom: .85rem;
+    font-size: 13px;
+    color: var(--red-dark);
+    font-weight: 500;
+  }
 
-  /* Highlight pulse */
-  @keyframes pulse-red { 0%,100%{opacity:1} 50%{opacity:.6} }
-  .pulse { animation: pulse-red 1s ease-in-out infinite; }
+  /* Footer */
+  .footer {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text-3);
+    text-align: center;
+  }
 </style>
+</head>
+<body>
+<div class="page">
 
-<div class="et-wrap" role="region" aria-label="Animação interativa do Efeito Tesoura">
-  <h2 class="sr-only">Efeito Tesoura — 7 etapas do crescimento que quebra empresas</h2>
-  <p class="et-title">Por que empresas que crescem quebram?</p>
-  <p class="et-subtitle">Navegue pelas 7 etapas do Efeito Tesoura e veja como a NCG descola do saldo de tesouraria.</p>
+  <div class="header">
+    <p class="header-label">Gestão do Capital de Giro — Unidade 3</p>
+    <h1>Por que empresas que crescem quebram?</h1>
+    <p>Navegue pelas 7 etapas do Efeito Tesoura e acompanhe como a NCG se descola do Saldo de Tesouraria.</p>
+  </div>
 
-  <div class="et-progress" id="progress" role="tablist" aria-label="Etapas"></div>
+  <div class="progress-wrap" id="progress"></div>
 
-  <div class="et-card" id="mainCard">
-    <div class="et-card-header" id="cardHeader">
-      <div class="et-step-badge" id="stepBadge"></div>
-      <p class="et-card-title" id="stepTitle"></p>
-      <span class="et-card-tag" id="stepTag"></span>
+  <div class="card">
+    <div class="card-header">
+      <div class="badge" id="badge"></div>
+      <p class="card-title" id="cardTitle"></p>
+      <span class="tag" id="cardTag"></span>
     </div>
-    <div class="et-card-body">
-      <div class="et-row" id="metricsRow"></div>
-      <p class="et-explanation" id="stepExpl"></p>
-      <div class="et-consequence" id="stepConseq"></div>
+    <div class="card-body">
+      <div class="metrics" id="metrics"></div>
+      <div class="explanation" id="expl"></div>
+      <div class="ruptura-banner" id="ruptura">
+        ✂️ &nbsp;As lâminas da tesoura se cruzam aqui — NCG supera o Saldo de Tesouraria.
+      </div>
+      <div class="consequence" id="conseq"></div>
 
-      <div class="et-chart-wrap">
-        <p class="et-chart-title">Evolução acumulada: NCG vs Saldo de Tesouraria (ST)</p>
-        <div class="et-chart">
-          <svg id="chartSvg" viewBox="0 0 540 110" preserveAspectRatio="none"></svg>
+      <div class="chart-wrap">
+        <p class="chart-title">NCG vs Saldo de Tesouraria — evolução acumulada</p>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:#D63B3B"></span>NCG — Necessidade de Capital de Giro</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#2563A8"></span>ST — Saldo de Tesouraria</span>
         </div>
+        <svg id="chartSvg" viewBox="0 0 680 130" preserveAspectRatio="none"></svg>
       </div>
     </div>
   </div>
 
-  <div class="et-controls">
-    <button class="et-btn" id="btnPrev" onclick="nav(-1)">← Anterior</button>
-    <span class="et-step-counter" id="stepCounter"></span>
-    <button class="et-btn primary" id="btnNext" onclick="nav(1)">Próxima →</button>
-    <span class="et-auto-label" id="autoLabel"></span>
+  <div class="controls">
+    <button id="btnPrev" onclick="nav(-1)">← Anterior</button>
+    <span class="step-counter" id="counter"></span>
+    <button class="primary" id="btnNext" onclick="nav(1)">Próxima →</button>
+  </div>
+
+  <div class="footer">
+    Use as teclas ← → para navegar entre as etapas
   </div>
 </div>
 
@@ -140,142 +311,134 @@
 const STEPS = [
   {
     title: "Aumento das vendas",
-    tag: "📈 Expansão",
-    tagColor: ["#EAF3DE","#639922","#3B6D11"],
-    badgeBg: "#EAF3DE", badgeColor: "#3B6D11",
-    icon: "↑",
+    tag: "Expansão",
+    tagBg: "#EEF7EE", tagColor: "#1A4A1A",
+    badgeBg: "#EEF7EE", badgeColor: "#1A4A1A",
     what: "Expansão rápida da receita — a empresa cresce e fatura mais.",
     impact: "Volume operacional cresce. Aparente saúde financeira.",
-    consequence: "⚠️ Sensação enganosa de que 'está tudo bem'.",
-    conseqBg: "#EAF3DE", conseqColor: "#3B6D11",
+    consequence: "⚠️  Sensação enganosa de que 'está tudo bem'.",
+    conseqBg: "#EEF7EE", conseqColor: "#1A4A1A",
+    ruptura: false,
     metrics: [
-      { label: "Vendas", value: "+30%", good: true },
-      { label: "NCG", value: "→ Baixa", good: true },
-      { label: "Saldo de Tesouraria", value: "Positivo", good: true }
+      { label: "Vendas", value: "+30%", color: "#3B7A3B" },
+      { label: "NCG", value: "→ Baixa", color: "#3B7A3B" },
+      { label: "Saldo de Tesouraria", value: "Positivo", color: "#3B7A3B" }
     ],
     ncg: 10, st: 8
   },
   {
     title: "Aumento de estoques (PME ↑)",
-    tag: "📦 Imobilização",
-    tagColor: ["#FAEEDA","#BA7517","#854F0B"],
-    badgeBg: "#FAEEDA", badgeColor: "#854F0B",
-    icon: "↑",
-    what: "Para sustentar as vendas maiores, a empresa precisa comprar e manter mais mercadoria em estoque.",
+    tag: "Imobilização",
+    tagBg: "#FEF3E2", tagColor: "#6B3F08",
+    badgeBg: "#FEF3E2", badgeColor: "#6B3F08",
+    what: "Para sustentar as vendas maiores, a empresa precisa manter mais mercadoria em estoque.",
     impact: "Caixa é imobilizado em produtos parados. Prazo Médio de Estoque sobe.",
-    consequence: "⚠️ Pressão sobre a liquidez — dinheiro parado em prateleiras.",
-    conseqBg: "#FAEEDA", conseqColor: "#854F0B",
+    consequence: "⚠️  Pressão sobre a liquidez — dinheiro parado em prateleiras.",
+    conseqBg: "#FEF3E2", conseqColor: "#6B3F08",
+    ruptura: false,
     metrics: [
-      { label: "PME", value: "↑ Sobe", good: false },
-      { label: "NCG", value: "↑ Cresce", good: false },
-      { label: "Caixa", value: "Cai", good: false }
+      { label: "PME", value: "↑ Sobe", color: "#BA7517" },
+      { label: "NCG", value: "↑ Cresce", color: "#BA7517" },
+      { label: "Caixa", value: "Cai", color: "#BA7517" }
     ],
     ncg: 22, st: 7
   },
   {
     title: "Aumento de contas a receber (PMR ↑)",
-    tag: "🧾 Recebíveis",
-    tagColor: ["#FAEEDA","#BA7517","#854F0B"],
-    badgeBg: "#FAEEDA", badgeColor: "#854F0B",
-    icon: "↑",
+    tag: "Recebíveis",
+    tagBg: "#FEF3E2", tagColor: "#6B3F08",
+    badgeBg: "#FEF3E2", badgeColor: "#6B3F08",
     what: "Para vender mais, a empresa oferece parcelamento. O dinheiro demora a entrar no caixa.",
     impact: "Caixa demora a entrar. Prazo Médio de Recebimento aumenta.",
-    consequence: "⚠️ Descasamento financeiro — vendeu mas ainda não recebeu.",
-    conseqBg: "#FAEEDA", conseqColor: "#854F0B",
+    consequence: "⚠️  Descasamento financeiro — vendeu, mas ainda não recebeu.",
+    conseqBg: "#FEF3E2", conseqColor: "#6B3F08",
+    ruptura: false,
     metrics: [
-      { label: "PMR", value: "↑ Sobe", good: false },
-      { label: "NCG", value: "↑↑ Cresce", good: false },
-      { label: "ST", value: "Cai mais", good: false }
+      { label: "PMR", value: "↑ Sobe", color: "#BA7517" },
+      { label: "NCG", value: "↑↑ Cresce", color: "#BA7517" },
+      { label: "ST", value: "Cai mais", color: "#BA7517" }
     ],
     ncg: 38, st: 5
   },
   {
     title: "Fornecedores não acompanham (PMP ↓)",
-    tag: "🤝 Prazo de pagto",
-    tagColor: ["#FCEBEB","#A32D2D","#791F1F"],
-    badgeBg: "#FCEBEB", badgeColor: "#A32D2D",
-    icon: "↓",
+    tag: "Prazo de pagamento",
+    tagBg: "#FDF0F0", tagColor: "#8B1F1F",
+    badgeBg: "#FDF0F0", badgeColor: "#8B1F1F",
     what: "Os fornecedores não aumentam os prazos de pagamento na mesma proporção que a empresa cresce.",
     impact: "Pagamentos vencem antes dos recebimentos. O ciclo financeiro se alonga.",
-    consequence: "🔴 NCG dispara — o crescimento aumenta a necessidade de capital, não o caixa.",
-    conseqBg: "#FCEBEB", conseqColor: "#A32D2D",
+    consequence: "🔴  NCG dispara — o crescimento aumenta a necessidade de capital, não o caixa.",
+    conseqBg: "#FDF0F0", conseqColor: "#8B1F1F",
+    ruptura: false,
     metrics: [
-      { label: "PMP", value: "→ Estável", good: false },
-      { label: "NCG", value: "↑↑↑ Dispara", good: false },
-      { label: "Ciclo Fin.", value: "Mais longo", good: false }
+      { label: "PMP", value: "→ Estável", color: "#D63B3B" },
+      { label: "NCG", value: "↑↑↑ Dispara", color: "#D63B3B" },
+      { label: "Ciclo Fin.", value: "Mais longo", color: "#D63B3B" }
     ],
     ncg: 58, st: 2
   },
   {
     title: "NCG cresce mais que o lucro",
-    tag: "💸 Armadilha",
-    tagColor: ["#FCEBEB","#A32D2D","#791F1F"],
-    badgeBg: "#FCEBEB", badgeColor: "#A32D2D",
-    icon: "!",
+    tag: "Armadilha",
+    tagBg: "#FDF0F0", tagColor: "#8B1F1F",
+    badgeBg: "#FDF0F0", badgeColor: "#8B1F1F",
     what: "A operação passa a consumir mais caixa do que gerar. A empresa precisa de capital externo só para funcionar.",
     impact: "Dependência de empréstimos para financiar o giro. ST vai a zero ou negativo.",
-    consequence: "🔴 Tesoura abre: NCG sobe, ST despenca. As lâminas se cruzam.",
-    conseqBg: "#FCEBEB", conseqColor: "#A32D2D",
+    consequence: "🔴  Tesoura abre: NCG sobe, ST despenca. As lâminas se cruzam.",
+    conseqBg: "#FDF0F0", conseqColor: "#8B1F1F",
+    ruptura: true,
     metrics: [
-      { label: "NCG", value: ">> Lucro", good: false },
-      { label: "ST", value: "→ Zero", good: false },
-      { label: "Dependência", value: "Externa", good: false }
+      { label: "NCG", value: ">> Lucro", color: "#D63B3B" },
+      { label: "ST", value: "→ Zero", color: "#D63B3B" },
+      { label: "Dependência", value: "Externa", color: "#D63B3B" }
     ],
     ncg: 72, st: -4
   },
   {
     title: "Aumento das despesas financeiras",
-    tag: "🏦 Juros",
-    tagColor: ["#FAECE7","#993C1D","#712B13"],
-    badgeBg: "#FAECE7", badgeColor: "#712B13",
-    icon: "↑",
+    tag: "Juros",
+    tagBg: "#FDF0F0", tagColor: "#8B1F1F",
+    badgeBg: "#FDF0F0", badgeColor: "#8B1F1F",
     what: "O uso de crédito para financiar o crescimento gera juros e encargos financeiros crescentes.",
     impact: "Margem líquida é comprimida. Cada real de venda gera menos lucro.",
-    consequence: "🔴 Erosão da rentabilidade — cresce em receita e encolhe em resultado.",
-    conseqBg: "#FAECE7", conseqColor: "#712B13",
+    consequence: "🔴  Erosão da rentabilidade — cresce em receita e encolhe em resultado.",
+    conseqBg: "#FDF0F0", conseqColor: "#8B1F1F",
+    ruptura: true,
     metrics: [
-      { label: "Despesas Fin.", value: "↑↑ Sobem", good: false },
-      { label: "Margem", value: "↓ Comprime", good: false },
-      { label: "ST", value: "Negativo", good: false }
+      { label: "Despesas Fin.", value: "↑↑ Sobem", color: "#D63B3B" },
+      { label: "Margem", value: "↓ Comprime", color: "#D63B3B" },
+      { label: "ST", value: "Negativo", color: "#D63B3B" }
     ],
     ncg: 85, st: -18
   },
   {
     title: "Ponto de ruptura",
-    tag: "✂️ Insolvência",
-    tagColor: ["#FCEBEB","#A32D2D","#501313"],
-    badgeBg: "#FCEBEB", badgeColor: "#501313",
-    icon: "✂",
+    tag: "✂ Insolvência",
+    tagBg: "#FDF0F0", tagColor: "#8B1F1F",
+    badgeBg: "#FDF0F0", badgeColor: "#8B1F1F",
     what: "Queda nas vendas, alta dos juros ou retração do crédito. A empresa não consegue honrar seus compromissos.",
     impact: "Falta caixa para pagar contas básicas, mesmo com faturamento alto.",
-    consequence: "🔴 Insolvência operacional — a tesoura fecha. Faturamento alto, caixa vazio.",
-    conseqBg: "#FCEBEB", conseqColor: "#A32D2D",
+    consequence: "🔴  Insolvência operacional — a tesoura fecha. Faturamento alto, caixa vazio.",
+    conseqBg: "#FDF0F0", conseqColor: "#8B1F1F",
+    ruptura: true,
     metrics: [
-      { label: "Faturamento", value: "Alto", good: false },
-      { label: "Caixa", value: "Zerado", good: false },
-      { label: "Situação", value: "Insolvente", good: false }
+      { label: "Faturamento", value: "Alto", color: "#D63B3B" },
+      { label: "Caixa", value: "Zerado", color: "#D63B3B" },
+      { label: "Situação", value: "Insolvente", color: "#D63B3B" }
     ],
     ncg: 92, st: -38
   }
 ];
 
 let current = 0;
-let autoTimer = null;
-
-// Chart color helpers
-function isDark() {
-  return window.matchMedia('(prefers-color-scheme: dark)').matches;
-}
 
 function buildProgress() {
   const wrap = document.getElementById('progress');
   wrap.innerHTML = '';
   STEPS.forEach((s, i) => {
     const d = document.createElement('div');
-    d.className = 'et-dot' + (i < current ? ' visited' : '') + (i === current ? ' active' : '');
-    d.setAttribute('role','tab');
-    d.setAttribute('aria-selected', i===current ? 'true':'false');
-    d.setAttribute('aria-label', 'Etapa '+(i+1)+': '+s.title);
+    d.className = 'dot' + (i < current ? ' visited' : '') + (i === current ? ' active' : '');
+    d.title = 'Etapa ' + (i+1) + ': ' + s.title;
     d.onclick = () => { current = i; render(); };
     wrap.appendChild(d);
   });
@@ -283,83 +446,65 @@ function buildProgress() {
 
 function buildChart() {
   const svg = document.getElementById('chartSvg');
-  const W = 540, H = 110, pad = 30, right = 10;
-  const plotW = W - pad - right;
-  const stepW = plotW / (STEPS.length - 1);
+  const W = 680, H = 130, padL = 36, padR = 12, padT = 16, padB = 18;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+  const N = STEPS.length;
+  const stepW = plotW / (N - 1);
 
-  // Collect data up to current step
   const ncgData = STEPS.map(s => s.ncg);
-  const stData = STEPS.map(s => s.st);
+  const stData  = STEPS.map(s => s.st);
+  const minVal = -50, maxVal = 105;
 
-  // Scale: ncg max ~95, st min ~-40
-  const minVal = -45, maxVal = 100;
-  function scaleY(v) {
-    return H - 12 - ((v - minVal) / (maxVal - minVal)) * (H - 24);
-  }
-  function scaleX(i) { return pad + i * stepW; }
+  function sy(v) { return padT + plotH - ((v - minVal) / (maxVal - minVal)) * plotH; }
+  function sx(i) { return padL + i * stepW; }
 
-  // Zero line
-  const zy = scaleY(0);
-
+  const zy = sy(0);
   let html = '';
 
-  // Grid line at zero
-  html += `<line x1="${pad}" y1="${zy}" x2="${W-right}" y2="${zy}" stroke="var(--color-border-tertiary)" stroke-width="0.5" stroke-dasharray="3 3"/>`;
-  html += `<text x="${pad-4}" y="${zy+4}" font-size="9" fill="var(--color-text-tertiary)" text-anchor="end" font-family="var(--font-sans)">0</text>`;
+  // Grid lines
+  [-25, 0, 25, 50, 75, 100].forEach(v => {
+    const y = sy(v);
+    const col = v === 0 ? 'rgba(0,0,0,0.18)' : 'rgba(0,0,0,0.07)';
+    const w = v === 0 ? '0.8' : '0.5';
+    html += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="${col}" stroke-width="${w}" ${v!==0?'stroke-dasharray="3 3"':''}/>`;
+    html += `<text x="${padL-4}" y="${y+4}" font-size="8" fill="rgba(0,0,0,0.35)" text-anchor="end" font-family="DM Sans,sans-serif">${v}</text>`;
+  });
 
-  // NCG path (all steps, gray up to current, colored after)
-  let ncgPath = '';
-  for (let i = 0; i < STEPS.length; i++) {
-    const x = scaleX(i), y = scaleY(ncgData[i]);
-    ncgPath += (i === 0 ? `M${x},${y}` : ` L${x},${y}`);
+  // Full paths (gray/faded)
+  let ncgFull='', stFull='';
+  for (let i=0;i<N;i++) {
+    ncgFull += (i===0?`M${sx(i)},${sy(ncgData[i])}`:` L${sx(i)},${sy(ncgData[i])}`);
+    stFull  += (i===0?`M${sx(i)},${sy(stData[i])} `:` L${sx(i)},${sy(stData[i])}`);
   }
-  html += `<path d="${ncgPath}" fill="none" stroke="var(--color-border-tertiary)" stroke-width="1" stroke-dasharray="3 2"/>`;
+  html += `<path d="${ncgFull}" fill="none" stroke="rgba(214,59,59,.15)" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+  html += `<path d="${stFull}"  fill="none" stroke="rgba(37,99,168,.15)" stroke-width="1.5" stroke-dasharray="4 3"/>`;
 
-  // NCG path up to current (colored)
-  let ncgActive = '';
-  for (let i = 0; i <= current; i++) {
-    const x = scaleX(i), y = scaleY(ncgData[i]);
-    ncgActive += (i === 0 ? `M${x},${y}` : ` L${x},${y}`);
+  // Active paths
+  let ncgActive='', stActive='';
+  for (let i=0;i<=current;i++) {
+    ncgActive += (i===0?`M${sx(i)},${sy(ncgData[i])}`:` L${sx(i)},${sy(ncgData[i])}`);
+    stActive  += (i===0?`M${sx(i)},${sy(stData[i])} `:` L${sx(i)},${sy(stData[i])}`);
   }
-  html += `<path d="${ncgActive}" fill="none" stroke="#E24B4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+  html += `<path d="${ncgActive}" fill="none" stroke="#D63B3B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  html += `<path d="${stActive}"  fill="none" stroke="#2563A8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
 
-  // ST path (all, gray)
-  let stPath = '';
-  for (let i = 0; i < STEPS.length; i++) {
-    const x = scaleX(i), y = scaleY(stData[i]);
-    stPath += (i === 0 ? `M${x},${y}` : ` L${x},${y}`);
+  // Dots at current
+  html += `<circle cx="${sx(current)}" cy="${sy(ncgData[current])}" r="5" fill="#D63B3B"/>`;
+  html += `<circle cx="${sx(current)}" cy="${sy(stData[current])}"  r="5" fill="#2563A8"/>`;
+
+  // Value labels
+  const nx = sx(current), ny = sy(ncgData[current]), sv2 = sy(stData[current]);
+  const offX = current < N-1 ? 8 : -8;
+  const anchor = current < N-1 ? 'start' : 'end';
+  html += `<text x="${nx+offX}" y="${ny-6}" font-size="10" fill="#D63B3B" font-family="DM Sans,sans-serif" font-weight="600" text-anchor="${anchor}">NCG ${ncgData[current]}</text>`;
+  html += `<text x="${nx+offX}" y="${sv2+14}" font-size="10" fill="#2563A8" font-family="DM Sans,sans-serif" font-weight="600" text-anchor="${anchor}">ST ${stData[current]}</text>`;
+
+  // Step numbers at bottom
+  for (let i=0;i<N;i++) {
+    const col = i===current ? '#1a1a18' : i<current ? 'rgba(0,0,0,0.45)' : 'rgba(0,0,0,0.18)';
+    html += `<text x="${sx(i)}" y="${H-2}" font-size="9" text-anchor="middle" fill="${col}" font-family="DM Sans,sans-serif">${i+1}</text>`;
   }
-  html += `<path d="${stPath}" fill="none" stroke="var(--color-border-tertiary)" stroke-width="1" stroke-dasharray="3 2"/>`;
-
-  // ST active
-  let stActive = '';
-  for (let i = 0; i <= current; i++) {
-    const x = scaleX(i), y = scaleY(stData[i]);
-    stActive += (i === 0 ? `M${x},${y}` : ` L${x},${y}`);
-  }
-  html += `<path d="${stActive}" fill="none" stroke="#3B8BD4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
-
-  // Dots at current step
-  const cx = scaleX(current);
-  html += `<circle cx="${cx}" cy="${scaleY(ncgData[current])}" r="4" fill="#E24B4A"/>`;
-  html += `<circle cx="${cx}" cy="${scaleY(stData[current])}" r="4" fill="#3B8BD4"/>`;
-
-  // Value labels at current
-  const ncgV = ncgData[current], stV = stData[current];
-  html += `<text x="${cx+7}" y="${scaleY(ncgV)+4}" font-size="10" fill="#E24B4A" font-family="var(--font-sans)" font-weight="500">NCG ${ncgV}</text>`;
-  html += `<text x="${cx+7}" y="${scaleY(stV)+4}" font-size="10" fill="#3B8BD4" font-family="var(--font-sans)" font-weight="500">ST ${stV}</text>`;
-
-  // Step number labels at bottom
-  for (let i = 0; i < STEPS.length; i++) {
-    const col = i <= current ? (i === current ? 'var(--color-text-primary)' : 'var(--color-text-secondary)') : 'var(--color-border-tertiary)';
-    html += `<text x="${scaleX(i)}" y="${H-1}" font-size="9" text-anchor="middle" fill="${col}" font-family="var(--font-sans)">${i+1}</text>`;
-  }
-
-  // Legend
-  html += `<rect x="${pad}" y="4" width="8" height="8" rx="2" fill="#E24B4A"/>`;
-  html += `<text x="${pad+12}" y="12" font-size="9" fill="var(--color-text-secondary)" font-family="var(--font-sans)">NCG (Necessidade de Capital de Giro)</text>`;
-  html += `<rect x="${pad+180}" y="4" width="8" height="8" rx="2" fill="#3B8BD4"/>`;
-  html += `<text x="${pad+192}" y="12" font-size="9" fill="var(--color-text-secondary)" font-family="var(--font-sans)">ST (Saldo de Tesouraria)</text>`;
 
   svg.innerHTML = html;
 }
@@ -369,60 +514,61 @@ function render() {
   buildProgress();
 
   // Badge
-  const badge = document.getElementById('stepBadge');
+  const badge = document.getElementById('badge');
   badge.style.background = s.badgeBg;
   badge.style.color = s.badgeColor;
-  badge.textContent = current === 6 ? '✂' : (current + 1);
+  badge.textContent = current+1;
 
-  // Title
-  document.getElementById('stepTitle').textContent = (current+1)+'. '+s.title;
-
-  // Tag
-  const tag = document.getElementById('stepTag');
+  // Title & tag
+  document.getElementById('cardTitle').textContent = (current+1)+'. '+s.title;
+  const tag = document.getElementById('cardTag');
   tag.textContent = s.tag;
-  tag.style.background = s.tagColor[0];
-  tag.style.color = s.tagColor[2];
+  tag.style.background = s.tagBg;
+  tag.style.color = s.tagColor;
 
   // Metrics
-  const mr = document.getElementById('metricsRow');
-  mr.innerHTML = s.metrics.map(m => `
-    <div class="et-metric">
-      <p class="et-metric-label">${m.label}</p>
-      <p class="et-metric-value" style="color:${m.good ? '#3B6D11' : '#A32D2D'}">${m.value}</p>
+  document.getElementById('metrics').innerHTML = s.metrics.map(m=>`
+    <div class="metric">
+      <div class="metric-label">${m.label}</div>
+      <div class="metric-value" style="color:${m.color}">${m.value}</div>
     </div>`).join('');
 
   // Explanation
-  document.getElementById('stepExpl').innerHTML = `<strong style="color:var(--color-text-primary)">O que acontece:</strong> ${s.what}<br><br><strong style="color:var(--color-text-primary)">Impacto financeiro:</strong> ${s.impact}`;
+  document.getElementById('expl').innerHTML =
+    `<strong>O que acontece:</strong> ${s.what}<br><br><strong>Impacto financeiro:</strong> ${s.impact}`;
+
+  // Ruptura banner
+  document.getElementById('ruptura').style.display = s.ruptura ? 'flex' : 'none';
 
   // Consequence
-  const cq = document.getElementById('stepConseq');
+  const cq = document.getElementById('conseq');
   cq.textContent = s.consequence;
   cq.style.background = s.conseqBg;
   cq.style.color = s.conseqColor;
 
-  // Counter
-  document.getElementById('stepCounter').textContent = `Etapa ${current+1} de ${STEPS.length}`;
-
-  // Buttons
+  // Counter & buttons
+  document.getElementById('counter').textContent = `Etapa ${current+1} de ${STEPS.length}`;
   document.getElementById('btnPrev').disabled = current === 0;
-  document.getElementById('btnNext').disabled = current === STEPS.length - 1;
-  document.getElementById('btnNext').textContent = current === STEPS.length - 1 ? 'Fim ✓' : 'Próxima →';
+  const nb = document.getElementById('btnNext');
+  nb.disabled = current === STEPS.length-1;
+  nb.textContent = current === STEPS.length-1 ? 'Concluído ✓' : 'Próxima →';
 
   buildChart();
 }
 
 function nav(dir) {
-  const next = current + dir;
-  if (next < 0 || next >= STEPS.length) return;
-  current = next;
+  const n = current + dir;
+  if (n < 0 || n >= STEPS.length) return;
+  current = n;
   render();
 }
 
-// Keyboard nav
 document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight') nav(1);
-  if (e.key === 'ArrowLeft') nav(-1);
+  if (e.key==='ArrowRight') nav(1);
+  if (e.key==='ArrowLeft')  nav(-1);
 });
 
 render();
 </script>
+</body>
+</html>
