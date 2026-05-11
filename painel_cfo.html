@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel do CFO - LogiTrans S.A.</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: #f5f5f7;
+      padding: 32px;
+      color: #2b2b2b;
+    }
+
+    .dashboard {
+      max-width: 1400px;
+      margin: auto;
+      display: grid;
+      gap: 24px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #8A0538, #9654ff);
+      color: white;
+      padding: 28px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      opacity: 0.95;
+      font-size: 1rem;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .info-card {
+      background: white;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+      border-left: 6px solid #DB5284;
+    }
+
+    .info-card h3 {
+      font-size: 0.95rem;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .info-card .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #8A0538;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-weight: 600;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+    }
+
+    .panel {
+      background: white;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    }
+
+    .panel h2 {
+      color: #8A0538;
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+    }
+
+    .chart {
+      position: relative;
+      height: 380px;
+      border-left: 3px solid #444;
+      border-bottom: 3px solid #444;
+      margin-top: 20px;
+      overflow: hidden;
+    }
+
+    .line-h,
+    .line-z,
+    .line-l {
+      position: absolute;
+      width: 100%;
+      border-top: 3px dashed;
+    }
+
+    .line-h {
+      top: 70px;
+      border-color: #FF0040;
+    }
+
+    .line-z {
+      top: 180px;
+      border-color: #DB5284;
+    }
+
+    .line-l {
+      top: 300px;
+      border-color: #6D64AE;
+    }
+
+    .label {
+      position: absolute;
+      left: 10px;
+      font-weight: 700;
+      background: white;
+      padding: 2px 8px;
+      border-radius: 8px;
+    }
+
+    .label-h {
+      top: 52px;
+      color: #FF0040;
+    }
+
+    .label-z {
+      top: 162px;
+      color: #DB5284;
+    }
+
+    .label-l {
+      top: 282px;
+      color: #6D64AE;
+    }
+
+    svg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .alerts {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .alert {
+      padding: 16px;
+      border-radius: 14px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .red {
+      background: rgba(255, 0, 64, 0.1);
+      border-left: 5px solid #FF0040;
+    }
+
+    .yellow {
+      background: rgba(219, 82, 132, 0.12);
+      border-left: 5px solid #DB5284;
+    }
+
+    .purple {
+      background: rgba(150, 84, 255, 0.12);
+      border-left: 5px solid #9654ff;
+    }
+
+    .decision {
+      background: linear-gradient(135deg, #6D64AE, #9654ff);
+      color: white;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    .decision h2 {
+      margin-bottom: 16px;
+    }
+
+    .decision ul {
+      margin-left: 20px;
+      margin-top: 12px;
+      line-height: 1.8;
+    }
+
+    .question {
+      background: white;
+      padding: 24px;
+      border-radius: 20px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+      border-top: 6px solid #8A0538;
+    }
+
+    .question h2 {
+      margin-bottom: 12px;
+      color: #8A0538;
+    }
+
+    @media (max-width: 900px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard">
+
+    <section class="header">
+      <h1>Painel do CFO – LogiTrans S.A.</h1>
+      <p>
+        Monitoramento estratégico da política de administração de caixa em ambiente de elevada volatilidade financeira.
+      </p>
+    </section>
+
+    <section class="info-grid">
+
+      <div class="info-card">
+        <h3>Volatilidade do caixa</h3>
+        <div class="value">Alta</div>
+        <div class="status">🔴 Risco elevado</div>
+      </div>
+
+      <div class="info-card">
+        <h3>Conversões financeiras/mês</h3>
+        <div class="value">18</div>
+        <div class="status">🔴 Frequência excessiva</div>
+      </div>
+
+      <div class="info-card">
+        <h3>Sobras de caixa</h3>
+        <div class="value">Recorrentes</div>
+        <div class="status">🟡 Recursos ociosos</div>
+      </div>
+
+      <div class="info-card">
+        <h3>Liquidez operacional</h3>
+        <div class="value">Instável</div>
+        <div class="status">🔴 Necessidade de controle</div>
+      </div>
+
+    </section>
+
+    <section class="main-grid">
+
+      <div class="panel">
+        <h2>Trajetória do saldo de caixa</h2>
+
+        <div class="chart">
+
+          <div class="line-h"></div>
+          <div class="line-z"></div>
+          <div class="line-l"></div>
+
+          <div class="label label-h">H – Limite superior</div>
+          <div class="label label-z">Z – Ponto de retorno</div>
+          <div class="label label-l">L – Limite inferior</div>
+
+          <svg viewBox="0 0 1000 380" preserveAspectRatio="none">
+            <polyline
+              fill="none"
+              stroke="#9654ff"
+              stroke-width="5"
+              points="0,220 70,180 120,210 180,130 240,90 320,120 390,100 470,180 560,320 650,210 730,150 820,90 880,60 930,210 1000,180"
+            />
+
+            <circle cx="560" cy="320" r="9" fill="#6D64AE" />
+            <line x1="560" y1="320" x2="560" y2="180" stroke="#6D64AE" stroke-width="4" stroke-dasharray="8" />
+
+            <circle cx="880" cy="60" r="9" fill="#FF0040" />
+            <line x1="880" y1="60" x2="880" y2="180" stroke="#FF0040" stroke-width="4" stroke-dasharray="8" />
+          </svg>
+
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Alertas financeiros</h2>
+
+        <div class="alerts">
+
+          <div class="alert red">
+            🔴 Custos bancários em crescimento devido ao excesso de movimentações financeiras.
+          </div>
+
+          <div class="alert red">
+            🔴 Frequentes oscilações do caixa aumentam o risco operacional.
+          </div>
+
+          <div class="alert yellow">
+            🟡 Política atual de reposição fixa não acompanha a volatilidade dos fluxos.
+          </div>
+
+          <div class="alert purple">
+            🟣 Necessidade de política adaptativa baseada em limites de controle.
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <section class="decision">
+      <h2>✔ Decisão estratégica do CFO</h2>
+
+      <p>
+        Após análise dos fluxos de caixa da LogiTrans S.A., a diretoria financeira decidiu substituir a política inspirada no modelo de Baumol por uma abordagem baseada no modelo de Miller-Orr.
+      </p>
+
+      <ul>
+        <li>Redução das intervenções financeiras desnecessárias;</li>
+        <li>Diminuição dos custos de transação;</li>
+        <li>Maior previsibilidade da liquidez;</li>
+        <li>Melhor adaptação à volatilidade operacional.</li>
+      </ul>
+    </section>
+
+    <section class="question">
+      <h2>Reflexão gerencial</h2>
+
+      <p>
+        Considerando o cenário apresentado, por que o modelo de Miller-Orr tende a ser mais adequado para empresas com elevada variabilidade nos fluxos de caixa?
+      </p>
+    </section>
+
+  </div>
+
+</body>
+</html>
