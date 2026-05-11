@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Case Prisma — Gestão do Capital de Giro</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--p-bordo:#8A0538;
+--p-bordo-light:#f5e6ec;
+--p-bordo-mid:#c4376e;
+--p-red:#FF0040;
+--p-red-soft:#DB5284;
+--p-red-pale:#fde8ef;
+--p-purple:#9654ff;
+--p-purple-soft:#6D64AE;
+--p-purple-pale:#ede8ff;
+--text:#1f2937;
+--text-soft:#6b7280;
+--bg:#ffffff;
+--bg-soft:#f8fafc;
+--border:#e5e7eb;
+}
+
+body{
+font-family:'Segoe UI',sans-serif;
+background:var(--bg-soft);
+color:var(--text);
+line-height:1.6;
+padding:32px 16px;
+}
+
+.container{
+max-width:1100px;
+margin:0 auto;
+background:#fff;
+padding:32px;
+border-radius:18px;
+box-shadow:0 10px 30px rgba(0,0,0,.06);
+}
+
+.header{
+background:var(--p-bordo);
+padding:22px;
+border-radius:14px;
+display:flex;
+gap:16px;
+align-items:center;
+margin-bottom:28px;
+color:#fff;
+}
+
+.header i{
+font-size:34px;
+}
+
+.header h1{
+font-size:1.5rem;
+margin-bottom:4px;
+}
+
+.header p{
+opacity:.8;
+font-size:.95rem;
+}
+
+.nav{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-bottom:28px;
+}
+
+.nav button{
+padding:10px 16px;
+border:none;
+border-radius:10px;
+background:var(--p-bordo-light);
+color:var(--p-bordo);
+cursor:pointer;
+font-weight:600;
+transition:.2s;
+}
+
+.nav button.active,
+.nav button:hover{
+background:var(--p-bordo);
+color:#fff;
+}
+
+.section{
+display:none;
+animation:fade .3s ease;
+}
+
+.section.active{
+display:block;
+}
+
+@keyframes fade{
+from{opacity:0;transform:translateY(8px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+h2{
+color:var(--p-bordo);
+margin-bottom:10px;
+}
+
+.subtitle{
+color:var(--text-soft);
+margin-bottom:24px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:14px;
+margin-bottom:24px;
+}
+
+.card{
+padding:18px;
+border-radius:14px;
+background:#fff;
+border:1px solid var(--border);
+}
+
+.card h3{
+font-size:.85rem;
+margin-bottom:8px;
+color:var(--text-soft);
+font-weight:600;
+}
+
+.card .value{
+font-size:1.6rem;
+font-weight:700;
+}
+
+.bordo{background:var(--p-bordo-light)}
+.purple{background:var(--p-purple-pale)}
+.red{background:var(--p-red-pale)}
+
+.info{
+padding:18px;
+border-radius:14px;
+margin-bottom:24px;
+background:var(--bg-soft);
+border-left:5px solid var(--p-bordo);
+}
+
+ul{
+padding-left:22px;
+margin-top:12px;
+}
+
+li{
+margin-bottom:8px;
+}
+
+.example{
+background:var(--p-purple-pale);
+padding:20px;
+border-radius:14px;
+margin:24px 0;
+}
+
+.example strong{
+color:var(--p-purple-soft);
+}
+
+.steps{
+display:grid;
+gap:14px;
+margin-top:18px;
+}
+
+.step{
+padding:18px;
+border:1px solid var(--border);
+border-radius:14px;
+background:#fff;
+}
+
+.step-title{
+font-weight:700;
+margin-bottom:6px;
+color:var(--p-bordo);
+}
+
+.footer-box{
+margin-top:28px;
+padding:22px;
+background:var(--p-bordo-light);
+border-radius:14px;
+}
+
+@media(max-width:768px){
+.container{
+padding:20px;
+}
+
+.header{
+flex-direction:column;
+align-items:flex-start;
+}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="header">
+<i class="ti ti-building-factory-2"></i>
+<div>
+<h1>Indústria Prisma de Embalagens</h1>
+<p>Case aplicado — Gestão do Capital de Giro</p>
+</div>
+</div>
+
+<div class="nav">
+<button class="active" onclick="showSection('contexto', this)">Contexto</button>
+<button onclick="showSection('antes', this)">Situação inicial</button>
+<button onclick="showSection('diagnostico', this)">Diagnóstico</button>
+<button onclick="showSection('plano', this)">Plano de ação</button>
+<button onclick="showSection('conclusao', this)">Conclusão</button>
+</div>
+
+<section id="contexto" class="section active">
+<h2>O que aconteceu com a Prisma?</h2>
+<p class="subtitle">A empresa aumentou as vendas, ampliou a produção e ofereceu mais prazo aos clientes. Apesar do crescimento do faturamento, o caixa começou a apresentar dificuldades.</p>
+
+<div class="cards">
+<div class="card bordo">
+<h3>Resultado comercial</h3>
+<div class="value">↑ Vendas</div>
+</div>
+
+<div class="card red">
+<h3>Problema financeiro</h3>
+<div class="value">↑ Crédito</div>
+</div>
+
+<div class="card purple">
+<h3>Consequência</h3>
+<div class="value">↑ NCG</div>
+</div>
+</div>
+
+<div class="info">
+<strong>Importante:</strong> crescer em vendas não significa gerar mais caixa. Quando os prazos financeiros ficam desequilibrados, a empresa pode precisar de capital externo para sustentar suas operações.
+</div>
+</section>
+
+<section id="antes" class="section">
+<h2>Situação antes da expansão</h2>
+<p class="subtitle">Antes do crescimento acelerado, o ciclo financeiro da empresa estava equilibrado.</p>
+
+<div class="cards">
+<div class="card">
+<h3>PME</h3>
+<div class="value">42 dias</div>
+</div>
+
+<div class="card">
+<h3>PMR</h3>
+<div class="value">58 dias</div>
+</div>
+
+<div class="card">
+<h3>PMP</h3>
+<div class="value">32 dias</div>
+</div>
+
+<div class="card bordo">
+<h3>NCG</h3>
+<div class="value">68 dias</div>
+</div>
+</div>
+
+<div class="info">
+A NCG era administrável e a empresa conseguia financiar suas operações sem grande dependência de crédito bancário.
+</div>
+</section>
+
+<section id="diagnostico" class="section">
+<h2>Diagnóstico — Efeito Tesoura</h2>
+<p class="subtitle">O crescimento das vendas provocou aumento da pressão sobre o caixa.</p>
+
+<ul>
+<li>Aumento do prazo médio de recebimento (PMR);</li>
+<li>Maior volume de estoques (PME);</li>
+<li>Redução do prazo médio de pagamento (PMP);</li>
+<li>Maior dependência de crédito de curto prazo.</li>
+</ul>
+
+<div class="example">
+<strong>Exemplo:</strong> ao ampliar o PMR em 10 dias, a NCG aumentou significativamente. Sem geração adicional de caixa, a empresa passou a financiar a operação com empréstimos de curto prazo.
+</div>
+
+<div class="info">
+O Efeito Tesoura ocorre quando a Necessidade de Capital de Giro cresce mais rapidamente do que a capacidade operacional de financiamento da empresa.
+</div>
+</section>
+
+<section id="plano" class="section">
+<h2>Plano integrado de correção</h2>
+<p class="subtitle">A solução exige ações coordenadas entre finanças, vendas e operações.</p>
+
+<div class="steps">
+<div class="step">
+<div class="step-title">1. Revisão da política de crédito</div>
+<p>Redução do prazo de recebimento e segmentação de clientes conforme risco.</p>
+</div>
+
+<div class="step">
+<div class="step-title">2. Gestão ativa de estoques</div>
+<p>Controle do giro e redução de itens de baixa rotatividade.</p>
+</div>
+
+<div class="step">
+<div class="step-title">3. Negociação com fornecedores</div>
+<p>Ampliação do prazo médio de pagamento com previsibilidade de compras.</p>
+</div>
+</div>
+</section>
+
+<section id="conclusao" class="section">
+<h2>Conclusão gerencial</h2>
+<p class="subtitle">O crescimento sustentável depende do equilíbrio do capital de giro.</p>
+
+<div class="footer-box">
+<p>O Efeito Tesoura não é resolvido apenas com crédito emergencial. O gestor financeiro precisa acompanhar continuamente os indicadores do ciclo financeiro e alinhar decisões comerciais, operacionais e financeiras para evitar desequilíbrios no caixa.</p>
+</div>
+</section>
+
+</div>
+
+<script>
+function showSection(id, btn){
+  document.querySelectorAll('.section').forEach(section => {
+    section.classList.remove('active');
+  });
+
+  document.querySelectorAll('.nav button').forEach(button => {
+    button.classList.remove('active');
+  });
+
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+
+</body>
+</html>
